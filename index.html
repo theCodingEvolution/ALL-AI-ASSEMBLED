@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My AI Hub</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--tx:#1d1c1a;--mut:#75726b;--bd:#e3e0d8;--ac:#d9622b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171614;--card:#222120;--tx:#efece6;--mut:#9a968d;--bd:#33312e;--ac:#f08a55}}
+:root[data-theme="dark"]{--bg:#171614;--card:#222120;--tx:#efece6;--mut:#9a968d;--bd:#33312e;--ac:#f08a55}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.w{max-width:1000px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:28px;margin:0 0 4px}
+.sub{color:var(--mut);margin:0 0 18px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+input,select,button{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
+#q{flex:1;min-width:180px}
+button{cursor:pointer}button:hover{border-color:var(--ac)}
+button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:24px 0 10px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.t{position:relative}
+.t a{display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border:1px solid var(--bd);border-radius:12px;color:var(--tx);text-decoration:none}
+.t a:hover{border-color:var(--ac);transform:translateY(-1px)}
+.i{width:34px;height:34px;flex:none;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:700}
+.n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.x{position:absolute;top:-6px;right:-6px;width:22px;height:22px;padding:0;border-radius:50%;line-height:1;display:none;background:#c0392b;color:#fff;border:0}
+.edit .x{display:block}
+#f{display:none;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+#f.o{display:flex}
+#f input{flex:1;min-width:140px}
+.em{color:var(--mut)}
+</style></head><body><div class="w">
+<h1>My AI Hub</h1>
+<p class="sub">All my AI tools in one place.</p>
+<div class="bar">
+<input id="q" placeholder="Search tools…" aria-label="Search">
+<button id="add">+ Add</button><button id="ed">Edit</button><button id="rs">Reset</button>
+</div>
+<div id="f">
+<input id="fn" placeholder="Name"><input id="fu" placeholder="URL (e.g. example.com)">
+<input id="fc" list="cats" placeholder="Category"><datalist id="cats"></datalist>
+<button class="p" id="sv">Save</button>
+</div>
+<div id="out"></div>
+</div>
+<script>
+var D=[
+["Claude","https://claude.ai","Chat"],["ChatGPT","https://chatgpt.com","Chat"],["Gemini","https://gemini.google.com","Chat"],["Copilot","https://copilot.microsoft.com","Chat"],["Perplexity","https://www.perplexity.ai","Chat"],["DeepSeek","https://chat.deepseek.com","Chat"],["Grok","https://grok.com","Chat"],["Mistral","https://chat.mistral.ai","Chat"],
+["NotebookLM","https://notebooklm.google.com","Research & Writing"],["Elicit","https://elicit.com","Research & Writing"],["Gamma","https://gamma.app","Research & Writing"],["Grammarly","https://www.grammarly.com","Research & Writing"],
+["Antigravity","https://antigravity.google","Code"],["Laravel","https://laravel.com","Code"],["Cursor","https://cursor.com","Code"],["Replit","https://replit.com","Code"],["GitHub Copilot","https://github.com/features/copilot","Code"],["Hugging Face","https://huggingface.co","Code"],
+["Midjourney","https://www.midjourney.com","Image & Video"],["Leonardo","https://leonardo.ai","Image & Video"],["Ideogram","https://ideogram.ai","Image & Video"],["Runway","https://runwayml.com","Image & Video"],
+["ElevenLabs","https://elevenlabs.io","Audio"],["Suno","https://suno.com","Audio"]
+].map(function(a){return{n:a[0],u:a[1],c:a[2]}});
+var K="aihub.v2",L=D.slice(),edit=false;
+try{var s=localStorage.getItem(K);if(s){var p=JSON.parse(s);if(Array.isArray(p))L=p}}catch(e){}
+function save(){try{localStorage.setItem(K,JSON.stringify(L))}catch(e){}}
+function col(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return"hsl("+h+",55%,45%)"}
+function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function render(){
+var q=document.getElementById("q").value.toLowerCase(),cats={},out="";
+L.forEach(function(t,i){if(!q||t.n.toLowerCase().indexOf(q)>-1||t.c.toLowerCase().indexOf(q)>-1)(cats[t.c]=cats[t.c]||[]).push([t,i])});
+Object.keys(cats).forEach(function(c){
+out+="<h2>"+esc(c)+"</h2><div class='g'>";
+cats[c].forEach(function(x){var t=x[0];
+out+="<div class='t'><a href='"+esc(t.u)+"' target='_blank' rel='noopener noreferrer'><span class='i' style='background:"+col(t.n)+"'>"+esc(t.n.charAt(0).toUpperCase())+"</span><span class='n'>"+esc(t.n)+"</span></a><button class='x' data-i='"+x[1]+"' aria-label='Remove'>×</button></div>"});
+out+="</div>"});
+var o=document.getElementById("out");
+o.className=edit?"edit":"";
+o.innerHTML=out||"<p class='em'>Nothing found.</p>";
+var cs=[];L.forEach(function(t){if(cs.indexOf(t.c)<0)cs.push(t.c)});
+document.getElementById("cats").innerHTML=cs.map(function(c){return"<option value='"+esc(c)+"'>"}).join("");
+document.getElementById("ed").textContent=edit?"Done":"Edit";
+}
+document.getElementById("q").oninput=render;
+document.getElementById("add").onclick=function(){document.getElementById("f").classList.toggle("o")};
+document.getElementById("ed").onclick=function(){edit=!edit;render()};
+document.getElementById("rs").onclick=function(){if(confirm("Restore the default list?")){L=D.slice();save();render()}};
+document.getElementById("sv").onclick=function(){
+var n=document.getElementById("fn").value.trim(),u=document.getElementById("fu").value.trim(),c=document.getElementById("fc").value.trim()||"My Tools";
+if(!n||!u)return;if(!/^https?:\/\//i.test(u))u="https://"+u;
+L.push({n:n,u:u,c:c});save();
+["fn","fu","fc"].forEach(function(i){document.getElementById(i).value=""});render()};
+document.getElementById("out").onclick=function(e){var b=e.target.closest(".x");if(b){L.splice(+b.dataset.i,1);save();render()}};
+render();
+</script></body></html>
